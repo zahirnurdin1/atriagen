@@ -11,7 +11,7 @@ const CONFIG = {
   headless: false,
   timeout: 90000,
   consoleUrl: "https://api.atria-asi.ai/console",
-  keyName: "satukey",
+  keyName: "satu",
   akunFile: path.join(__dirname, "akun.txt"),
   resultFile: path.join(__dirname, "api_keys.txt"),
   delayBetweenAccounts: 5000,
@@ -659,11 +659,8 @@ async function registerOne(browser, account, index, total) {
     console.log(`${tag}     Menunggu halaman API Keys stabil...`);
     await sleep(3500);
 
-    // Step 9: Buat API Key Baru dengan nama "satukey"
+    // Step 9: Buat API Key Baru
     console.log(`${tag} [9] Membuat API Key dengan nama "${CONFIG.keyName}"...`);
-
-    // Screenshot sebelum create untuk debug
-    try { await page.screenshot({ path: path.join(__dirname, `debug-before-create-${Date.now()}.png`), fullPage: true }); } catch (_) { }
 
     // === Sub-step 9.1: Klik tombol Create Key PERTAMA di halaman ===
     console.log(`${tag}     [9.1] Mencari tombol Create Key pertama...`);
@@ -724,7 +721,6 @@ async function registerOne(browser, account, index, total) {
 
     if (!firstCreateClicked) {
       console.log(`${tag}     [WARN] Tombol Create Key pertama tidak ditemukan.`);
-      try { await page.screenshot({ path: path.join(__dirname, `debug-no-first-create-${Date.now()}.png`), fullPage: true }); } catch (_) { }
     } else {
       console.log(`${tag}     ✅ Tombol Create Key pertama berhasil diklik.`);
       console.log(`${tag}     Memberi jeda agar animasi dialog mulai terbuka...`);
@@ -947,10 +943,6 @@ async function registerOne(browser, account, index, total) {
       await sleep(5000);
       await waitForPageFullyLoaded(page, tag);
       await sleep(2000);
-
-      try {
-        await page.screenshot({ path: path.join(__dirname, `debug-after-create-${Date.now()}.png`), fullPage: true });
-      } catch (_) { }
     }
 
     // ====================================================================
@@ -1121,15 +1113,10 @@ async function registerOne(browser, account, index, total) {
       removeAccount(account.email); // Hapus akun yang sukses dari akun.txt
     } else {
       console.log(`${tag} ❌ Gagal mengekstrak API Key`);
-      const screenshot = path.join(__dirname, `error-${index}.png`);
-      await page.screenshot({ path: screenshot, fullPage: true });
-      console.log(`${tag}    Screenshot error disimpan di: ${screenshot}`);
       appendResult(account.email, null, "FAILED");
     }
   } catch (err) {
     console.error(`${tag} ❌ Error: ${err.message}`);
-    const screenshot = path.join(__dirname, `error-${index}.png`);
-    try { await page.screenshot({ path: screenshot, fullPage: true }); } catch (_) { }
     appendResult(account.email, null, "ERROR");
   } finally {
     await context.close();
