@@ -1,0 +1,5 @@
+﻿node_modules/
+*.png
+akun.txt
+api_keys.txt
+.env
